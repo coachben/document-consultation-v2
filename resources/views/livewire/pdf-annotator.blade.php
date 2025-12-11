@@ -31,7 +31,7 @@
             this.tempSelection.mainRect.x,
             this.tempSelection.mainRect.y,
             this.tempSelection.text,
-            'highlight',
+            this.tempSelection.tool || 'highlight',
             { 
                 rects: this.tempSelection.rects, 
                 note: this.note, 
@@ -53,7 +53,8 @@
                     layer: annotationLayer,
                     annotation: {
                         content: this.tempSelection.text,
-                        meta: { rects: this.tempSelection.rects }
+                        meta: { rects: this.tempSelection.rects },
+                        type: this.tempSelection.tool || 'highlight'
                     }
                 }
              }));
@@ -131,7 +132,7 @@
 
         <!-- Bottom Row: Context Tools (Annotate) -->
         <div class="h-12 px-4 flex items-center bg-gray-50 gap-2 shadow-inner border-b border-gray-200" x-show="true">
-            
+
             <!-- Text Annotation Tools -->
             <div class="flex items-center gap-1 pr-4 border-r border-gray-300">
                 <!-- Highlight -->
@@ -139,29 +140,33 @@
                     :class="activeTool === 'highlight' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
                     class="p-2 rounded transition" title="Highlight">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                            stroke-linecap="round" stroke-linejoin="round" />
                         <path d="M3 21h18" stroke-linecap="round" /> <!-- Line at bottom like a marker underline -->
                     </svg>
                 </button>
-                
+
                 <!-- Underline -->
                 <button @click="setTool('underline')"
                     :class="activeTool === 'underline' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
-                    class="p-2 rounded transition group" title="Underline">
-                     <div class="flex flex-col items-center justify-center">
-                        <span class="font-serif font-bold text-lg leading-none">U</span>
-                        <div class="h-0.5 w-4 bg-current mt-0.5"></div>
-                    </div>
+                    class="p-2 rounded transition" title="Underline">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="4" y1="21" x2="20" y2="21" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                 </button>
 
                 <!-- Strike -->
                 <button @click="setTool('strike')"
                     :class="activeTool === 'strike' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
                     class="p-2 rounded transition relative" title="Strikethrough">
-                     <span class="font-serif font-bold text-lg leading-none relative">
-                        S
-                        <div class="absolute top-1/2 left-0 w-full h-0.5 bg-current transform -translate-y-1/2"></div>
-                     </span>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M17.3 19c-1.4 1.2-3.2 2-5.3 2-4.4 0-8-3.6-8-8 0-1.5.4-2.8 1.1-4M9.5 3c1.7-.6 3.5-1 5.5-1 5.5 0 9 4.5 9 9 0 1.9-.6 3.6-1.6 5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                 </button>
 
                 <!-- Free Text -->
@@ -169,8 +174,9 @@
                     :class="activeTool === 'text' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
                     class="p-2 rounded transition" title="Free Text">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M7 8h10M12 7v9m-4 8h8" stroke-linecap="round" stroke-linejoin="round"/>
-                        <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5" stroke-dasharray="4 2"/> <!-- Box hint -->
+                        <path d="M7 8h10M12 7v9m-4 8h8" stroke-linecap="round" stroke-linejoin="round" />
+                        <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5" stroke-dasharray="4 2" />
+                        <!-- Box hint -->
                     </svg>
                 </button>
             </div>
@@ -192,12 +198,14 @@
             <div class="flex items-center gap-1">
                 <button class="p-2 rounded text-gray-600 hover:bg-gray-200 transition disabled:opacity-50" title="Undo">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
                     </svg>
                 </button>
                 <button class="p-2 rounded text-gray-600 hover:bg-gray-200 transition disabled:opacity-50" title="Redo">
-                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path>
                     </svg>
                 </button>
             </div>
@@ -323,7 +331,7 @@
                         @this.saveAnnotation(data.pageNum, data.x, data.y, data.content, data.type);
                     },
                     onTextSelect: (data) => {
-                         // Open Modal using Alpine helper
+                        // Open Modal using Alpine helper
                         if (window.openAnnotationModal) {
                             window.openAnnotationModal(data);
                         }
