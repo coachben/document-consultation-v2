@@ -131,42 +131,46 @@
 
         <!-- Bottom Row: Context Tools (Annotate) -->
         <div class="h-12 px-4 flex items-center bg-gray-50 gap-2 shadow-inner border-b border-gray-200" x-show="true">
-            <!-- x-show="activeTab === 'annotate'" if we had tabs state -->
-
+            
             <!-- Text Annotation Tools -->
             <div class="flex items-center gap-1 pr-4 border-r border-gray-300">
+                <!-- Highlight -->
                 <button @click="setTool('highlight')"
                     :class="activeTool === 'highlight' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
-                    class="p-2 rounded transition" title="Highlight Text">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
-                        </path>
+                    class="p-2 rounded transition" title="Highlight">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M3 21h18" stroke-linecap="round" /> <!-- Line at bottom like a marker underline -->
                     </svg>
                 </button>
+                
+                <!-- Underline -->
                 <button @click="setTool('underline')"
                     :class="activeTool === 'underline' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
-                    class="p-2 rounded transition" title="Underline Text">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 19h16M4 5a8 8 0 0116 0"></path>
-                    </svg> <!-- Approximate U icon -->
+                    class="p-2 rounded transition group" title="Underline">
+                     <div class="flex flex-col items-center justify-center">
+                        <span class="font-serif font-bold text-lg leading-none">U</span>
+                        <div class="h-0.5 w-4 bg-current mt-0.5"></div>
+                    </div>
                 </button>
+
+                <!-- Strike -->
                 <button @click="setTool('strike')"
                     :class="activeTool === 'strike' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
-                    class="p-2 rounded transition" title="Strikethrough Text">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"></path>
-                    </svg> <!-- Strike icon -->
+                    class="p-2 rounded transition relative" title="Strikethrough">
+                     <span class="font-serif font-bold text-lg leading-none relative">
+                        S
+                        <div class="absolute top-1/2 left-0 w-full h-0.5 bg-current transform -translate-y-1/2"></div>
+                     </span>
                 </button>
+
+                <!-- Free Text -->
                 <button @click="setTool('text')"
                     :class="activeTool === 'text' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
                     class="p-2 rounded transition" title="Free Text">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M12 7v9m-4 8h8">
-                        </path>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 8h10M12 7v9m-4 8h8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5" stroke-dasharray="4 2"/> <!-- Box hint -->
                     </svg>
                 </button>
             </div>
@@ -175,11 +179,11 @@
             <div class="flex items-center gap-1 pr-4 border-r border-gray-300">
                 <button @click="setTool('note')"
                     :class="activeTool === 'note' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
-                    class="p-2 rounded transition" title="Add Note">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z">
-                        </path>
+                    class="p-2 rounded transition" title="Sticky Note">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 2h8a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                        <path d="M9 2v4h6" /> <!-- Fold style -->
+                        <path d="M8 10h8M8 14h6" stroke-linecap="round" />
                     </svg>
                 </button>
             </div>
@@ -188,14 +192,12 @@
             <div class="flex items-center gap-1">
                 <button class="p-2 rounded text-gray-600 hover:bg-gray-200 transition disabled:opacity-50" title="Undo">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
                     </svg>
                 </button>
                 <button class="p-2 rounded text-gray-600 hover:bg-gray-200 transition disabled:opacity-50" title="Redo">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path>
+                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path>
                     </svg>
                 </button>
             </div>
@@ -310,234 +312,30 @@
             </div>
         </div>
 
+        <script src="{{ asset('js/pdf-annotation-system.js') }}"></script>
         <script>
             document.addEventListener('livewire:initialized', () => {
-                const url = '{{ asset($documentPath) }}';
-                const container = document.getElementById('pdf-container');
-
-                let pdfDoc = null;
-                let currentScale = 1.5;
-                let currentTool = 'select';
-
-                // Listen for Scale Change from Alpine
-                window.addEventListener('scale-change', (e) => {
-                    handleScaleChange(e.detail.scale);
-                });
-
-                // Modal Open Helper
-                function openModal(data) {
-                    if (window.openAnnotationModal) {
-                        window.openAnnotationModal(data);
-                    } else {
-                        // Retry once if Alpine isn't ready
-                        setTimeout(() => { if (window.openAnnotationModal) window.openAnnotationModal(data); }, 100);
-                    }
-                }
-
-                // Listen for Custom Render (Optimistic UI)
-                window.addEventListener('render-highlight', (e) => {
-                    if (e.detail.layer && e.detail.annotation) {
-                        renderHighlight(e.detail.layer, e.detail.annotation);
-                    }
-                });
-
-                // Global function for Alpine to call
-                window.updateInteractionState = (tool) => {
-                    currentTool = tool;
-                    const layers = document.querySelectorAll('.annotation-layer');
-                    const textLayers = document.querySelectorAll('.textLayer');
-
-                    // Reset classes
-                    document.body.classList.remove('cursor-grab', 'cursor-text', 'cursor-copy', 'cursor-default');
-
-                    if (tool === 'hand') {
-                        document.body.style.cursor = 'grab';
-                        textLayers.forEach(l => l.style.pointerEvents = 'none');
-                        layers.forEach(l => l.style.pointerEvents = 'none');
-                    } else if (['select', 'highlight', 'underline', 'strike'].includes(tool)) {
-                        document.body.style.cursor = 'text';
-                        textLayers.forEach(l => l.style.pointerEvents = 'auto');
-                        layers.forEach(l => l.style.pointerEvents = 'none');
-                    } else if (['note', 'text'].includes(tool)) {
-                        document.body.style.cursor = 'copy'; // Start/Text cursor
-                        textLayers.forEach(l => l.style.pointerEvents = 'none');
-                        layers.forEach(l => {
-                            l.style.pointerEvents = 'auto';
-                            l.classList.add('cursor-copy');
-                        });
+                const config = {
+                    url: '{{ asset($documentPath) }}',
+                    containerId: 'pdf-container',
+                    annotations: @json($annotations),
+                    onAnnotationCreate: (data) => {
+                        @this.saveAnnotation(data.pageNum, data.x, data.y, data.content, data.type);
+                    },
+                    onTextSelect: (data) => {
+                         // Open Modal using Alpine helper
+                        if (window.openAnnotationModal) {
+                            window.openAnnotationModal(data);
+                        }
                     }
                 };
 
-                // Debounced Scale Handler
-                let scaleTimeout;
-                function handleScaleChange(newScale) {
-                    currentScale = newScale;
-                    clearTimeout(scaleTimeout);
-                    scaleTimeout = setTimeout(() => {
-                        renderPdf();
-                    }, 100); // 100ms debounce
-                }
+                // Initialize System
+                window.pdfApp = new PdfAnnotationSystem(config);
 
-                async function renderPdf() {
-                    container.innerHTML = ''; // Clear existing
-                    // Show Loading?
-
-                    const loadingTask = pdfjsLib.getDocument(url);
-                    pdfDoc = await loadingTask.promise;
-
-                    for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-                        const page = await pdfDoc.getPage(pageNum);
-                        const viewport = page.getViewport({ scale: currentScale });
-
-                        // Wrapper
-                        const pageDiv = document.createElement('div');
-                        pageDiv.className = 'relative mb-6 shadow-md group bg-white';
-                        pageDiv.style.width = viewport.width + 'px';
-                        pageDiv.style.height = viewport.height + 'px';
-                        pageDiv.setAttribute('data-page-number', pageNum);
-                        container.appendChild(pageDiv);
-
-                        // Canvas
-                        const canvas = document.createElement('canvas');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
-                        pageDiv.appendChild(canvas);
-
-                        const renderContext = {
-                            canvasContext: canvas.getContext('2d'),
-                            viewport: viewport,
-                        };
-                        await page.render(renderContext).promise;
-
-                        // Text Layer
-                        const textLayerDiv = document.createElement('div');
-                        textLayerDiv.className = 'textLayer absolute inset-0';
-                        textLayerDiv.style.setProperty('--scale-factor', currentScale);
-                        pageDiv.appendChild(textLayerDiv);
-
-                        const textContent = await page.getTextContent();
-                        pdfjsLib.renderTextLayer({
-                            textContentSource: textContent,
-                            container: textLayerDiv,
-                            viewport: viewport,
-                            textDivs: []
-                        });
-
-                        // Annotation Layer
-                        const annotationLayer = document.createElement('div');
-                        annotationLayer.className = 'annotation-layer absolute inset-0 pointer-events-none';
-                        pageDiv.appendChild(annotationLayer);
-
-                        // Render existing annotations
-                        renderAnnotations(annotationLayer, pageNum, viewport.width, viewport.height);
-
-                        // Note Creation Handler
-                        // Attached to pageDiv to capture clicks when in 'note' mode
-                        pageDiv.addEventListener('click', (e) => {
-                            if (currentTool !== 'note' && currentTool !== 'text') return;
-
-                            // Ignore if clicked on existing marker
-                            if (e.target.closest('.cursor-pointer')) return;
-
-                            const rect = pageDiv.getBoundingClientRect();
-                            const x = (e.clientX - rect.left) / rect.width * 100;
-                            const y = (e.clientY - rect.top) / rect.height * 100;
-
-                            const text = prompt('Enter note:');
-                            if (text) {
-                                // Default type 'note' for both tools for now, or distinguish if backend supports 'text'
-                                // The backend supports 'note', so we use that.
-                                @this.saveAnnotation(pageNum, x, y, text, 'note');
-                                renderNoteMarker(annotationLayer, {
-                                    x_coordinate: x,
-                                    y_coordinate: y,
-                                    content: text
-                                });
-                                // Don't auto-switch tool, let user add multiple notes
-                            }
-                        });
-                    }
-
-                    // Re-apply current tool state to new elements
-                    window.updateInteractionState(currentTool);
-                }
-
-                function renderAnnotations(layer, pageNum, width, height) {
-                    const annotations = @json($annotations);
-                    annotations.filter(a => a.page_number == pageNum).forEach(a => {
-                        if (a.type === 'highlight') {
-                            renderHighlight(layer, a);
-                        } else {
-                            renderNoteMarker(layer, a);
-                        }
-                    });
-                }
-
-                function renderNoteMarker(layer, annotation) {
-                    const marker = document.createElement('div');
-                    marker.className = 'absolute bg-blue-500 border-2 border-white w-6 h-6 rounded-full shadow-lg flex items-center justify-center text-white text-xs transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition cursor-pointer pointer-events-auto z-10';
-                    marker.style.left = annotation.x_coordinate + '%';
-                    marker.style.top = annotation.y_coordinate + '%';
-                    marker.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>';
-                    marker.title = annotation.content;
-                    layer.appendChild(marker);
-                }
-
-                function renderHighlight(layer, annotation) {
-                    if (!annotation.meta || !annotation.meta.rects) return;
-                    annotation.meta.rects.forEach(rect => {
-                        const el = document.createElement('div');
-                        el.className = 'absolute bg-yellow-300 opacity-40 mix-blend-multiply pointer-events-none';
-                        el.style.left = rect.x + '%';
-                        el.style.top = rect.y + '%';
-                        el.style.width = rect.w + '%';
-                        el.style.height = rect.h + '%';
-                        el.title = annotation.content;
-                        layer.appendChild(el);
-                    });
-                }
-
-                // Handle Text Selection for Highlights
-                document.addEventListener('mouseup', async () => {
-                    // Allow selection in these modes
-                    if (!['select', 'highlight', 'underline', 'strike'].includes(currentTool)) return;
-
-                    const selection = window.getSelection();
-                    if (selection.isCollapsed) return;
-
-                    const range = selection.getRangeAt(0);
-                    const startNode = range.startContainer.parentNode;
-
-                    const pageDiv = startNode.closest('.group');
-                    if (!pageDiv) return;
-
-                    const pageNum = parseInt(pageDiv.getAttribute('data-page-number'));
-                    if (!pageNum) return;
-
-                    const pageRect = pageDiv.getBoundingClientRect();
-                    const clientRects = Array.from(range.getClientRects());
-                    const pdfRects = clientRects.map(rect => ({
-                        x: (rect.left - pageRect.left) / pageRect.width * 100,
-                        y: (rect.top - pageRect.top) / pageRect.height * 100,
-                        w: rect.width / pageRect.width * 100,
-                        h: rect.height / pageRect.height * 100
-                    }));
-
-                    const text = selection.toString();
-                    if (text && pdfRects.length > 0) {
-                        // Open Modal instead of saving
-                        setTimeout(() => {
-                            openModal({
-                                text: text,
-                                rects: pdfRects,
-                                pageNum: pageNum,
-                                mainRect: pdfRects[0]
-                            });
-                        }, 100);
-                    }
-                });
-
-                renderPdf();
+                // Listen for Livewire updates to refresh annotations if needed?
+                // For now, optimistic UI handles immediate feedback.
             });
         </script>
     </div>
+</div>
