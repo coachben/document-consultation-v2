@@ -231,46 +231,111 @@
             <div class="flex-1 overflow-auto p-4 space-y-3">
                 @forelse($annotations as $annotation)
                     <div
-                        class="group bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-400 hover:shadow-md transition relative">
-                        <div class="flex items-start justify-between gap-2">
-                            <div class="flex items-center gap-2 mb-1">
-                                @if($annotation['type'] === 'highlight')
-                                    <span
-                                        class="bg-yellow-100 text-yellow-700 text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">Highlight</span>
-                                @else
-                                    <span
-                                        class="bg-blue-100 text-blue-700 text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">Note</span>
-                                @endif
+                        class="group bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-400 hover:shadow-md transition relative flex gap-3">
 
-                                <!-- Stars -->
-                                @if(isset($annotation['meta']['rating']) && $annotation['meta']['rating'] > 0)
-                                    <div class="flex text-yellow-400 text-xs">
-                                        @for($i = 0; $i < $annotation['meta']['rating']; $i++) ★ @endfor
-                                    </div>
-                                @endif
-                            </div>
-                            <button wire:click="deleteAnnotation({{ $annotation['id'] }})"
-                                class="text-gray-300 hover:text-red-500 transition p-1 rounded hover:bg-red-50"
-                                title="Delete">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                    </path>
+                        <!-- Voting Column -->
+                        <div class="flex flex-col items-center gap-0.5 pt-1 text-gray-400">
+                            <button wire:click="toggleVote({{ $annotation['id'] }}, 'up')"
+                                class="hover:text-green-500 transition p-0.5 rounded hover:bg-green-50 {{ isset($annotation['user_vote']) && $annotation['user_vote'] === 'up' ? 'text-green-600' : '' }}">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+
+                            <span
+                                class="text-xs font-bold {{ $annotation['score'] > 0 ? 'text-green-600' : ($annotation['score'] < 0 ? 'text-red-600' : 'text-gray-500') }}">
+                                {{ $annotation['score'] }}
+                            </span>
+
+                            <button wire:click="toggleVote({{ $annotation['id'] }}, 'down')"
+                                class="hover:text-red-500 transition p-0.5 rounded hover:bg-red-50 {{ isset($annotation['user_vote']) && $annotation['user_vote'] === 'down' ? 'text-red-600' : '' }}">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </button>
                         </div>
 
-                        <p class="text-sm text-gray-700 leading-relaxed break-words font-medium">
-                            "{{ Str::limit($annotation['content'], 100) }}"
-                        </p>
+                        <!-- Content Column -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                    @if($annotation['type'] === 'highlight')
+                                        <span
+                                            class="bg-yellow-100 text-yellow-700 text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">Highlight</span>
+                                    @elseif($annotation['type'] === 'strike')
+                                        <span
+                                            class="bg-red-100 text-red-700 text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider line-through decoration-red-500/50">Delete</span>
+                                    @elseif($annotation['type'] === 'underline')
+                                        <span
+                                            class="bg-blue-100 text-blue-700 text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider underline decoration-blue-500/50">Underline</span>
+                                    @else
+                                        <span
+                                            class="bg-gray-100 text-gray-700 text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">Note</span>
+                                    @endif
 
-                        @if(isset($annotation['meta']['note']) && $annotation['meta']['note'])
-                            <div class="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded italic">
-                                {{ $annotation['meta']['note'] }}
+                                    <!-- Stars -->
+                                    @if(isset($annotation['meta']['rating']) && $annotation['meta']['rating'] > 0)
+                                        <div class="flex text-yellow-400 text-xs">
+                                            @for($i = 0; $i < $annotation['meta']['rating']; $i++) ★ @endfor
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-[10px] text-gray-400 mr-2">Pg {{ $annotation['page_number'] }}</span>
+                                    <button wire:click="deleteAnnotation({{ $annotation['id'] }})"
+                                        class="text-gray-300 hover:text-red-500 transition p-1 rounded hover:bg-red-50"
+                                        title="Delete">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
-                        @endif
 
-                        <div class="mt-1 text-xs text-gray-300 text-right">Page {{ $annotation['page_number'] }}</div>
+                            <p
+                                class="text-sm text-gray-700 leading-relaxed break-words font-medium {{ $annotation['type'] === 'strike' ? 'line-through decoration-red-400 opacity-60' : '' }}">
+                                "{{ Str::limit($annotation['content'], 100) }}"
+                            </p>
+
+                            @if(isset($annotation['meta']['note']) && $annotation['meta']['note'])
+                                <div class="mt-2 text-xs text-gray-600 bg-gray-50 border-l-2 border-gray-200 pl-2 py-1">
+                                    <span class="font-bold text-gray-400 uppercase text-[9px]">Justification:</span>
+                                    {{ $annotation['meta']['note'] }}
+                                </div>
+                            @endif
+
+                            <!-- Comments Thread -->
+                            <div class="mt-3 pt-2 border-t border-gray-100 space-y-2">
+                                @if(!empty($annotation['comments']))
+                                    <div class="space-y-1.5 pl-2 border-l border-gray-100">
+                                        @foreach($annotation['comments'] as $comment)
+                                            <div class="text-xs">
+                                                <span
+                                                    class="font-bold text-gray-600">{{ $comment['user']['name'] ?? 'User' }}</span>
+                                                <span class="text-gray-500">{{ $comment['body'] }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <div class="flex gap-2 items-center mt-2">
+                                    <input wire:model="commentBody.{{ $annotation['id'] }}"
+                                        wire:keydown.enter="addComment({{ $annotation['id'] }})" type="text"
+                                        placeholder="Reply..."
+                                        class="flex-1 text-xs border border-gray-200 rounded px-2 py-1 focus:ring-1 focus:ring-blue-500 outline-none bg-gray-50 focus:bg-white transition">
+                                    <button wire:click="addComment({{ $annotation['id'] }})"
+                                        class="text-xs text-blue-600 font-medium hover:text-blue-800 disabled:opacity-50">
+                                        Post
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 @empty
                     <div class="text-center py-10 text-gray-400">

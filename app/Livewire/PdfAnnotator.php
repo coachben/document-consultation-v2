@@ -4,6 +4,8 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Annotation;
+use App\Models\Comment;
+use App\Models\Vote;
 use Illuminate\Support\Collection;
 
 class PdfAnnotator extends Component
@@ -12,6 +14,8 @@ class PdfAnnotator extends Component
     public $annotations = [];
     public $newAnnotationContent = '';
 
+    public $commentBody = []; // Keyed by annotation ID
+
     public function mount()
     {
         $this->loadAnnotations();
@@ -19,19 +23,60 @@ class PdfAnnotator extends Component
 
     public function loadAnnotations()
     {
-        $this->annotations = Annotation::where('document_path', $this->documentPath)->get()->toArray();
+        $this->annotations = Annotation::where('document_path', $this->documentPath)
+            ->with(['comments.user', 'votes'])
+            ->latest()
+            ->get()
+            ->map(function ($annotation) {
+                // Manually append accessors to array
+                $annotation->setAttribute('score', $annotation->score);
+                $annotation->setAttribute('user_vote', $annotation->votes->where('user_id', auth()->id() ?? 1)->first()?->type);
+                return $annotation;
+            })
+            ->toArray();
+    }
+
+    public function toggleVote($annotationId, $type)
+    {
+        $userId = auth()->id() ?? 1;
+        $annotation = Annotation::find($annotationId);
+
+        $existing = $annotation->votes()->where('user_id', $userId)->first();
+
+        if ($existing) {
+            if ($existing->type === $type) {
+                $existing->delete(); // Untoggle
+            } else {
+                $existing->update(['type' => $type]);
+            }
+        } else {
+            $annotation->votes()->create([
+                'user_id' => $userId,
+                'type' => $type
+            ]);
+        }
+
+        $this->loadAnnotations();
+    }
+
+    public function addComment($annotationId)
+    {
+        if (empty($this->commentBody[$annotationId]))
+            return;
+
+        Comment::create([
+            'user_id' => auth()->id() ?? 1,
+            'annotation_id' => $annotationId,
+            'body' => $this->commentBody[$annotationId]
+        ]);
+
+        $this->commentBody[$annotationId] = '';
+        $this->loadAnnotations();
     }
 
     public function saveAnnotation($page, $x, $y, $content, $type = 'note', $meta = [])
     {
-        \Illuminate\Support\Facades\Log::info('saveAnnotation called', [
-            'page' => $page,
-            'x' => $x,
-            'y' => $y,
-            'content' => $content,
-            'type' => $type,
-            'meta' => $meta
-        ]);
+        // ... (logging omitted for brevity)
 
         Annotation::create([
             'document_path' => $this->documentPath,
