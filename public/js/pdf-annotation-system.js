@@ -236,8 +236,7 @@ class PdfAnnotationSystem {
     // Global MouseUp for Selection
     handleSelection() {
         // Only auto-trigger for specific active tools (e.g. highlight or select mode)
-        // Underline and Strike are now triggered manually via toolbar buttons
-        if (!['select', 'highlight'].includes(this.currentTool)) return;
+        if (!['select', 'highlight', 'underline', 'strike'].includes(this.currentTool)) return;
 
         const selection = window.getSelection();
         if (selection.isCollapsed) return;
