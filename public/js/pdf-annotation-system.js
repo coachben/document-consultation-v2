@@ -221,16 +221,35 @@ class PdfAnnotationSystem {
         }
     }
 
+    // Trigger annotation manually (e.g. from toolbar button) from current selection
+    triggerAnnotation(type) {
+        const selection = window.getSelection();
+        if (selection.isCollapsed) {
+            alert('Please select text first.');
+            return;
+        }
+
+        // Reuse the logic from handleSelection, but force the type
+        this.processSelection(selection, type);
+    }
+
     // Global MouseUp for Selection
     handleSelection() {
-        if (!['select', 'highlight', 'underline', 'strike'].includes(this.currentTool)) return;
+        // Only auto-trigger for specific active tools (e.g. highlight or select mode)
+        // Underline and Strike are now triggered manually via toolbar buttons
+        if (!['select', 'highlight'].includes(this.currentTool)) return;
 
         const selection = window.getSelection();
         if (selection.isCollapsed) return;
 
+        this.processSelection(selection, this.currentTool);
+    }
+
+    processSelection(selection, toolType) {
         const range = selection.getRangeAt(0);
         const startNode = range.startContainer.parentNode;
-        const pageDiv = startNode.closest('.group');
+        // Ensure we are selecting inside the PDF page
+        const pageDiv = startNode.closest('.group') || (startNode.classList.contains('group') ? startNode : null);
 
         if (!pageDiv) return;
 
@@ -252,8 +271,13 @@ class PdfAnnotationSystem {
                 rects: pdfRects,
                 pageNum,
                 mainRect: pdfRects[0],
-                tool: this.currentTool // Pass the active tool
+                tool: toolType // Pass the specific tool type
             });
+
+            // If it's a direct annotation tool (not 'select' which opens modal), clear selection
+            if (toolType !== 'select') {
+                selection.removeAllRanges();
+            }
         }
     }
 }

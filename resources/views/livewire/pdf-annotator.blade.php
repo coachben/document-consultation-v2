@@ -148,24 +148,22 @@
                 </button>
 
                 <!-- Underline -->
-                <button @click="setTool('underline')"
-                    :class="activeTool === 'underline' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
-                    class="p-2 rounded transition" title="Underline">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3" stroke-linecap="round" stroke-linejoin="round" />
-                        <line x1="4" y1="21" x2="20" y2="21" stroke-linecap="round" stroke-linejoin="round" />
+                <button @mousedown.prevent="window.pdfApp.triggerAnnotation('underline')"
+                    class="text-gray-600 hover:bg-gray-200 p-2 rounded transition" 
+                    title="Underline (Select text first)">
+                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="4" y1="21" x2="20" y2="21" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
 
                 <!-- Strike -->
-                <button @click="setTool('strike')"
-                    :class="activeTool === 'strike' ? 'bg-gray-200 text-blue-600' : 'text-gray-600 hover:bg-gray-200'"
-                    class="p-2 rounded transition relative" title="Strikethrough">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                            d="M17.3 19c-1.4 1.2-3.2 2-5.3 2-4.4 0-8-3.6-8-8 0-1.5.4-2.8 1.1-4M9.5 3c1.7-.6 3.5-1 5.5-1 5.5 0 9 4.5 9 9 0 1.9-.6 3.6-1.6 5"
-                            stroke-linecap="round" stroke-linejoin="round" />
-                        <line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round" stroke-linejoin="round" />
+                <button @mousedown.prevent="window.pdfApp.triggerAnnotation('strike')"
+                    class="text-gray-600 hover:bg-gray-200 p-2 rounded transition relative" 
+                    title="Strikethrough (Select text first)">
+                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.3 19c-1.4 1.2-3.2 2-5.3 2-4.4 0-8-3.6-8-8 0-1.5.4-2.8 1.1-4M9.5 3c1.7-.6 3.5-1 5.5-1 5.5 0 9 4.5 9 9 0 1.9-.6 3.6-1.6 5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
 
