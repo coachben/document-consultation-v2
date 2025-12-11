@@ -149,21 +149,23 @@
 
                 <!-- Underline -->
                 <button @mousedown.prevent="window.pdfApp.triggerAnnotation('underline')"
-                    class="text-gray-600 hover:bg-gray-200 p-2 rounded transition" 
+                    class="text-gray-600 hover:bg-gray-200 p-2 rounded transition"
                     title="Underline (Select text first)">
-                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <line x1="4" y1="21" x2="20" y2="21" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="4" y1="21" x2="20" y2="21" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </button>
 
                 <!-- Strike -->
                 <button @mousedown.prevent="window.pdfApp.triggerAnnotation('strike')"
-                    class="text-gray-600 hover:bg-gray-200 p-2 rounded transition relative" 
+                    class="text-gray-600 hover:bg-gray-200 p-2 rounded transition relative"
                     title="Strikethrough (Select text first)">
-                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17.3 19c-1.4 1.2-3.2 2-5.3 2-4.4 0-8-3.6-8-8 0-1.5.4-2.8 1.1-4M9.5 3c1.7-.6 3.5-1 5.5-1 5.5 0 9 4.5 9 9 0 1.9-.6 3.6-1.6 5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M17.3 19c-1.4 1.2-3.2 2-5.3 2-4.4 0-8-3.6-8-8 0-1.5.4-2.8 1.1-4M9.5 3c1.7-.6 3.5-1 5.5-1 5.5 0 9 4.5 9 9 0 1.9-.6 3.6-1.6 5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </button>
 
@@ -290,7 +292,7 @@
                         x-text="tempSelection ? (tempSelection.text.length > 50 ? tempSelection.text.substring(0,50) + '...' : tempSelection.text) : ''"></span>"
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-4" x-show="tempSelection?.tool !== 'strike' && tempSelection?.tool !== 'underline'">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Rating</label>
                     <div class="flex gap-1">
                         <template x-for="i in 5">
@@ -302,8 +304,11 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Note
-                        (Optional)</label>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                        <span x-show="tempSelection?.tool === 'strike'">Reason for deletion</span>
+                        <span x-show="tempSelection?.tool === 'underline'">Comment</span>
+                        <span x-show="!['strike', 'underline'].includes(tempSelection?.tool)">Note (Optional)</span>
+                    </label>
                     <textarea x-model="note"
                         class="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                         rows="3" placeholder="Add your thoughts..."></textarea>
@@ -313,7 +318,9 @@
                     <button @click="closeModal()"
                         class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
                     <button @click="submitAnnotation()"
-                        class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded font-medium shadow-lg hover:shadow-xl transition">Save</button>
+                        class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded font-medium shadow-lg hover:shadow-xl transition">
+                        <span x-text="tempSelection?.tool === 'strike' ? 'Propose Deletion' : 'Save Annotation'">Save</span>
+                    </button>
                 </div>
             </div>
         </div>
