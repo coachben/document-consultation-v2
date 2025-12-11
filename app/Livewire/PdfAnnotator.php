@@ -30,15 +30,28 @@ class PdfAnnotator extends Component
             ->map(function ($annotation) {
                 // Manually append accessors to array
                 $annotation->setAttribute('score', $annotation->score);
-                $annotation->setAttribute('user_vote', $annotation->votes->where('user_id', auth()->id() ?? 1)->first()?->type);
+                $annotation->setAttribute('user_vote', $annotation->votes->where('user_id', $this->getUserId())->first()?->type);
                 return $annotation;
             })
             ->toArray();
     }
 
+    public function getUserId()
+    {
+        if (auth()->check()) {
+            return auth()->id();
+        }
+
+        // Ensure a fallback user exists for guests/demos
+        return \App\Models\User::firstOrCreate(
+            ['email' => 'guest@example.com'],
+            ['name' => 'Guest User', 'password' => bcrypt('password')]
+        )->id;
+    }
+
     public function toggleVote($annotationId, $type)
     {
-        $userId = auth()->id() ?? 1;
+        $userId = $this->getUserId();
         $annotation = Annotation::find($annotationId);
 
         $existing = $annotation->votes()->where('user_id', $userId)->first();
@@ -65,7 +78,7 @@ class PdfAnnotator extends Component
             return;
 
         Comment::create([
-            'user_id' => auth()->id() ?? 1,
+            'user_id' => $this->getUserId(),
             'annotation_id' => $annotationId,
             'body' => $this->commentBody[$annotationId]
         ]);
