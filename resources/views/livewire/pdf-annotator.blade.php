@@ -26,12 +26,18 @@
     submitAnnotation() {
         if (!this.tempSelection) return;
         
+        // If tool is 'select', default to 'highlight' for the annotation type
+        let type = this.tempSelection.tool;
+        if (!type || type === 'select') {
+            type = 'highlight';
+        }
+
         $wire.saveAnnotation(
             this.tempSelection.pageNum,
             this.tempSelection.mainRect.x,
             this.tempSelection.mainRect.y,
             this.tempSelection.text,
-            this.tempSelection.tool || 'highlight',
+            type,
             { 
                 rects: this.tempSelection.rects, 
                 note: this.note, 
@@ -39,22 +45,17 @@
             }
         );
 
-        // Optimistic UI for Sidebar (basic list append happens via Livewire re-render usually, 
-        // but we can rely on Livewire here for sidebar as it's outside the PDF canvs)
         // Optimistic UI for Highlight on PDF
         const pageDiv = document.querySelector(`.group[data-page-number='${this.tempSelection.pageNum}']`);
         if (pageDiv) {
              const annotationLayer = pageDiv.querySelector('.annotation-layer');
-             // dispatch event or call global function? 
-             // accessing component scope from Alpine is tricky for custom JS functions defined below.
-             // We'll trust the Livewire re-render or add a custom event dispatch.
              window.dispatchEvent(new CustomEvent('render-highlight', { 
                 detail: { 
                     layer: annotationLayer,
                     annotation: {
                         content: this.tempSelection.text,
                         meta: { rects: this.tempSelection.rects },
-                        type: this.tempSelection.tool || 'highlight'
+                        type: type
                     }
                 }
              }));
@@ -62,6 +63,7 @@
 
         this.closeModal();
     },
+
     closeModal() {
         this.showModal = false;
         this.note = '';
